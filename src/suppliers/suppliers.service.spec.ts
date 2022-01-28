@@ -1,18 +1,44 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { SuppliersService } from './suppliers.service';
+import { Test } from '@nestjs/testing';
+import { SuppliersService } from '../suppliers/suppliers.service';
+import { PrismaService } from '../prisma.service';
 
 describe('SuppliersService', () => {
-  let service: SuppliersService;
+  let prismaService: PrismaService;
+  let suppliersService: SuppliersService;
 
   beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      providers: [SuppliersService],
+    const module = await Test.createTestingModule({
+      providers: [
+        SuppliersService, SuppliersService,
+        {
+          provide: PrismaService,
+          useFactory: () => ({
+            suppliers: {
+              findMany: jest.fn(),
+              findUnique: jest.fn(),
+            },
+          }),
+        },
+      ],
     }).compile();
 
-    service = module.get<SuppliersService>(SuppliersService);
+    suppliersService = module.get<SuppliersService>(SuppliersService);
+    prismaService = module.get<PrismaService>(PrismaService);
   });
 
-  it('should be defined', () => {
-    expect(service).toBeDefined();
+  describe('getSuppliersIds method', () => {
+    it('should invoke prismaService.catalogs.findMany', async () => {
+      await suppliersService.getSuppliersIds();
+      expect(prismaService.suppliers.findMany).toHaveBeenCalled();
+    });
   });
-});
+
+  describe('getSupplierById method', () => {
+    it('should invoke prismaService.catalogs.findUnique', async () => {
+      const supplier_id: number = 1;
+      await suppliersService.getSupplierById(supplier_id);
+      expect(prismaService.suppliers.findUnique).toHaveBeenCalled();
+    });
+  });
+
+})
