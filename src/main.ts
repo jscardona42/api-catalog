@@ -8,6 +8,6 @@ async function bootstrap() {
     logger: getLogLevels(process.env.NODE_ENV === 'development')
   });
   app.useGlobalPipes(new ValidationPipe());
-  await app.listen(3000);
+  await app.listen(process.env.PORT || 3000);
 }
 bootstrap();
