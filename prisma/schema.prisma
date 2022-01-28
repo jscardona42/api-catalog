@@ -10,25 +10,24 @@ datasource db {
 model catalogs {
   catalog_id  Int       @id @default(autoincrement())
   name        String    @db.VarChar(255)
-  price       Decimal   @default(0) @db.Decimal(10, 2)
+  price       Float     @default(0)
   supplier_id Int
-  suppliers   suppliers @relation(fields: [supplier_id], references: [spplier_id], map: "fk_supplier_id")
+  suppliers   suppliers @relation(fields: [supplier_id], references: [supplier_id], map: "fk_supplier_id")
 }
 
 model suppliers {
-  spplier_id Int        @id @default(autoincrement())
+  supplier_id Int        @id @default(autoincrement())
   name       String     @db.VarChar(255)
   catalogs   catalogs[]
   users      users[]
 }
 
 model users {
-  user_id     Int        @id @default(autoincrement())
-  full_name   String     @db.VarChar(255)
-  email       String     @db.VarChar(255)
-  password    String     @db.VarChar(255)
+  user_id     Int       @id @default(autoincrement())
+  email       String    @db.VarChar(255)
+  password    String    @db.VarChar(255)
   salt        String?
   token       String?
-  supplier_id Int?
-  suppliers   suppliers? @relation(fields: [supplier_id], references: [spplier_id], onDelete: Restrict, map: "fk_supplier_id")
+  supplier_id Int
+  suppliers   suppliers @relation(fields: [supplier_id], references: [supplier_id], onDelete: Restrict, map: "fk_supplier_id")
 }
