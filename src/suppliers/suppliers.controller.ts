@@ -1,33 +1,20 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { SuppliersService } from './suppliers.service';
-import { CreateSupplierDto, UpdateSupplierDto } from './dto/supplier.dto';
+import { Body, Controller, Post } from '@nestjs/common';
+import { CommandBus } from '@nestjs/cqrs';
+import { CreateSupplierCommand } from './commands/createsupplier.command';
+import { CreateSupplierDto } from './dto/supplier.dto';
+import { Supplier } from './entities/supplier.entity';
 
 @Controller('suppliers')
 export class SuppliersController {
-  constructor(private readonly suppliersService: SuppliersService) {}
+  constructor(
+    private readonly commandBus: CommandBus
+  ) { }
 
-  @Post()
-  create(@Body() createSupplierDto: CreateSupplierDto) {
-    return this.suppliersService.create(createSupplierDto);
+  @Post('/create')
+  createSupplier(@Body() input: CreateSupplierDto): Promise<Supplier> {
+    return this.commandBus.execute(
+      new CreateSupplierCommand(input)
+    )
   }
 
-  @Get()
-  findAll() {
-    return this.suppliersService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.suppliersService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateSupplierDto: UpdateSupplierDto) {
-    return this.suppliersService.update(+id, updateSupplierDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.suppliersService.remove(+id);
-  }
 }

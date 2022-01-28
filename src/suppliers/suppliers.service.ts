@@ -1,25 +1,24 @@
-import { Injectable } from '@nestjs/common';
-import { CreateSupplierDto, UpdateSupplierDto } from './dto/supplier.dto';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { PrismaService } from '../prisma.service';
+import { Supplier } from './entities/supplier.entity';
 
 @Injectable()
 export class SuppliersService {
-  create(createSupplierDto: CreateSupplierDto) {
-    return 'This action adds a new supplier';
-  }
 
-  findAll() {
-    return `This action returns all suppliers`;
-  }
+    constructor(
+        private readonly prismaService: PrismaService
+    ) { }
 
-  findOne(id: number) {
-    return `This action returns a #${id} supplier`;
-  }
+    async getSuppliersIds(): Promise<any> {
+        return this.prismaService.suppliers.findMany({
+            select: { supplier_id: true }
+        });
+    }
 
-  update(id: number, updateSupplierDto: UpdateSupplierDto) {
-    return `This action updates a #${id} supplier`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} supplier`;
-  }
+    async getSupplierById(supplier_id: number): Promise<Supplier> {
+        return this.prismaService.suppliers.findUnique({
+            where: { supplier_id: supplier_id },
+            rejectOnNotFound: () => new NotFoundException(`Supplier with id ${supplier_id} does not exist`)
+        });
+    }
 }
