@@ -8,10 +8,6 @@ export class CreateUserDto {
 
     @IsNotEmpty()
     @IsString()
-    full_name: string;
-
-    @IsNotEmpty()
-    @IsString()
     email: string;
 
     @IsNotEmpty()
@@ -24,3 +20,13 @@ export class CreateUserDto {
 }
 
 export class UpdateUserDto extends PartialType(CreateUserDto) { }
+
+export class SignInUserDto {
+    @IsNotEmpty()
+    @IsString()
+    email: string;
+
+    @IsNotEmpty()
+    @IsString()
+    password: string;
+}
