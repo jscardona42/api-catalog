@@ -1,33 +1,30 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Body, Post, UseGuards } from '@nestjs/common';
+import { JwtAuthGuard } from '../auth/auth.guard';
 import { CatalogsService } from './catalogs.service';
-import { CreateCatalogDto, UpdateCatalogDto } from './dto/catalog.dto';
+import { CreateCatalogDto } from './dto/catalog.dto';
+import { Catalog } from './entities/catalog.entity';
 
 @Controller('catalogs')
 export class CatalogsController {
-  constructor(private readonly catalogsService: CatalogsService) {}
+  constructor(
+    private readonly catalogsService: CatalogsService
+  ) { }
 
-  @Post()
-  create(@Body() createCatalogDto: CreateCatalogDto) {
-    return this.catalogsService.create(createCatalogDto);
+  @Get('filter')
+  @UseGuards(new JwtAuthGuard())
+  getFilterCatalogs(@Body("term") term: string): Promise<any[]> {
+    return this.catalogsService.getFilterCatalogs(term);
   }
 
-  @Get()
-  findAll() {
-    return this.catalogsService.findAll();
+  @Get('byuserid')
+  @UseGuards(new JwtAuthGuard())
+  getCatalogByUserId(@Body("user_id") user_id: number): Promise<any> {
+    return this.catalogsService.getCatalogByUserId(user_id);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.catalogsService.findOne(+id);
+  @Post('create')
+  createCatalog(@Body() input: CreateCatalogDto): Promise<Catalog> {
+    return this.catalogsService.createCatalog(input);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCatalogDto: UpdateCatalogDto) {
-    return this.catalogsService.update(+id, updateCatalogDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.catalogsService.remove(+id);
-  }
 }

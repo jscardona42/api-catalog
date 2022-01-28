@@ -1,4 +1,5 @@
 import { PartialType } from "@nestjs/mapped-types";
+import { Decimal } from "@prisma/client/runtime";
 import { IsNotEmpty, IsNumber, IsString } from "class-validator";
 
 export class CreateCatalogDto {
@@ -15,4 +16,4 @@ export class CreateCatalogDto {
     supplier_id: number;
 }
 
-export class UpdateCatalogDto extends PartialType(CreateCatalogDto) {}
+export class UpdateCatalogDto extends PartialType(CreateCatalogDto) { }
