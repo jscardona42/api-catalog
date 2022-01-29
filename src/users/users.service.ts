@@ -72,7 +72,6 @@ export class UsersService {
       })
       .catch((err) => {
         this.logger.warn(err);
-        throw new UnauthorizedException("Error: ");
       });
   }
 
