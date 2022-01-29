@@ -12,11 +12,18 @@ export class CatalogsService {
   ) { }
 
   async getFilterCatalogs(term: string): Promise<any> {
-    return this.prismaService.catalogs.findMany({
+    let catalogs = await this.prismaService.catalogs.findMany({
       where: { OR: [{ name: { contains: term, mode: "insensitive" } }, { suppliers: { name: { contains: term } } }] },
       orderBy: { catalog_id: "asc" },
       select: { name: true, price: true, suppliers: { select: { name: true } } }
     });
+
+    catalogs.forEach((catalog, i) => {
+      Object.assign(catalogs[i], { supplier: catalog.suppliers.name });
+      delete catalogs[i].suppliers;
+    });
+    
+    return catalogs;
   }
 
   async getCatalogByUserId(user_id: number): Promise<any> {
