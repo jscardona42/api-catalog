@@ -79,6 +79,10 @@ export class UsersService {
     let suppliersIds = await this.suppliersService.getSuppliersIds();
     let arraySuppliersIds = [];
 
+    if (suppliersIds === null) {
+      throw new UnauthorizedException('To continue with the user registration, you must first register a supplier');
+    }
+
     suppliersIds.forEach(supplier => {
       arraySuppliersIds.push(supplier.supplier_id);
     });
