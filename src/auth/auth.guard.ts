@@ -1,4 +1,4 @@
-import { ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
+import { ExecutionContext, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import * as jwt from "jsonwebtoken";
 import { PrismaService } from '../prisma.service';
@@ -32,8 +32,10 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     async validateToken(user_id: number, token: string) {
         let prismaService = new PrismaService();
         let user = await prismaService.users.findUnique({
-            where: { user_id }
+            where: { user_id },
+            rejectOnNotFound: () => new NotFoundException(`User with id ${user_id} does not exist`)
         });
+
 
         if (user.token !== token) {
             throw new UnauthorizedException("The token does not belong to the user");
